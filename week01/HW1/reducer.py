@@ -76,14 +76,14 @@ for term in term_counts:
     term_counts[term]['prob_spam'] = (term_counts[term]['spam_count'] + 1.0)/(spam_doc_word_count + term_count)
 
 # for debugging
-if False:    
-    for k in counts:
-        print '{0} {1} {2} {3} {4}'.format(k[0],k[1],k[2],k[3],counts[k])
-    for t in term_counts:
-        print '{0} {1} {2} {3} {4}'.format(t, term_counts[t]['spam_count'], 
-                                       term_counts[t]['ham_count'],
-                                       term_counts[t]['prob_spam'],
-                                       term_counts[t]['prob_ham'])
+if True:    
+#    for k in counts:
+#        print '{0} {1} {2} {3} {4}'.format(k[0],k[1],k[2],k[3],counts[k])
+#    for t in term_counts:
+#        print '{0} {1} {2} {3} {4}'.format(t, term_counts[t]['spam_count'], 
+#                                       term_counts[t]['ham_count'],
+#                                       term_counts[t]['prob_spam'],
+#                                       term_counts[t]['prob_ham'])
     print len(spam_doc_ids)
     print len(ham_doc_ids)
     print spam_doc_word_count
