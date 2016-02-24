@@ -7,3 +7,6 @@
 [submodule "week03/HW3/group"]
 	path = week03/HW3/group
 	url = https://github.com/dunmireg/HW3Submission.git
+[submodule "week06/HW6/group"]
+	path = week06/HW6/group
+	url = https://github.com/fkrunic/HW6
