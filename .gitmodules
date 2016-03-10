@@ -10,3 +10,6 @@
 [submodule "week06/HW6/group"]
 	path = week06/HW6/group
 	url = https://github.com/fkrunic/HW6
+[submodule "week07/HW7/group"]
+	path = week07/HW7/group
+	url = https://github.com/dunmireg/Week7
