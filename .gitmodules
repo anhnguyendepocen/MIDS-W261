@@ -13,3 +13,6 @@
 [submodule "week07/HW7/group"]
 	path = week07/HW7/group
 	url = https://github.com/dunmireg/Week7
+[submodule "week09/HW9/group"]
+	path = week09/HW9/group
+	url = https://github.com/dunmireg/Week8
