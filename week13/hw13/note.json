@@ -1,0 +1,125 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n## HW 13.1: Spark implementation of basic PageRank\n\nWrite a basic Spark implementation of the iterative PageRank algorithm that takes sparse adjacency lists as input.\nMake sure that your implementation utilizes teleportation (1-damping/the number of nodes in the network), and further, distributes the mass of dangling nodes with each iterationso that the output of each iteration is correctly normalized (sums to 1).\n\n[**NOTE:** The PageRank algorithm assumes that a random surfer (walker), starting from a random web page,chooses the next page to which it will move by clicking at random, with probability d, one of the hyperlinks in the current page. This probability is represented by a so-called ‘damping factor’ d, where d ∈ (0, 1). Otherwise, with probability (1 − d), the surfer jumps to any web page in the network. If a page is a dangling end, meaning it has no outgoing hyperlinks, the random surfer selects an arbitrary web page from a uniform distribution and “teleports” to that page]\n\nIn your Spark solution, please use broadcast variables and caching to make sure your code is as efficient as possible.\n\nAs you build your code, use the test data from S3 or [DropBox](https://www.dropbox.com/sh/2c0k5adwz36lkcw/AAAAKsjQfF9uHfv-X9mCqr9wa?dl\u003d0) under subfolder HW7.\n\n    s3://ucb-mids-mls-networks/PageRank-test.txt\n    \nwith teleportation parameter set to 0.15 (1-d, where d, the damping factor is set to 0.85), and crosscheck your work with the true result, displayed in the first image in the [Wikipedia](https://en.wikipedia.org/wiki/PageRank)\n\nHere are the contents of the PageRank-test.txt file:\n\n    B       {\u0027C\u0027: 1}\n    C       {\u0027B\u0027: 1}\n    D       {\u0027A\u0027: 1, \u0027B\u0027: 1}\n    E       {\u0027D\u0027: 1, \u0027B\u0027: 1, \u0027F\u0027: 1}\n    F       {\u0027B\u0027: 1, \u0027E\u0027: 1}\n    G       {\u0027B\u0027: 1, \u0027E\u0027: 1}\n    H       {\u0027B\u0027: 1, \u0027E\u0027: 1}\n    I       {\u0027B\u0027: 1, \u0027E\u0027: 1}\n    J       {\u0027E\u0027: 1}\n    K       {\u0027E\u0027: 1}\n\nAnd here for reference are the corresponding PageRank probabilities:\n\n    A,0.033\n    B,0.384\n    C,0.343\n    D,0.039\n    E,0.081\n    F,0.039\n    G,0.016\n    H,0.016\n    I,0.016\n    J,0.016\n    K,0.016\n\nRun this experiment locally first. Report the local configuration that you used and how long in minutes and seconds it takes to complete your job.\n\nRepeat this experiment on AWS. Report the AWS cluster configuration that you used and how long in minutes and seconds it takes to complete your job. (in your notebook, cat the cluster config file)\n\n",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 18, 2016 9:39:59 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461038401462_-917773411",
+      "id": "20160418-210001_514436337",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "\u003ch2\u003eHW 13.1: Spark implementation of basic PageRank\u003c/h2\u003e\n\u003cp\u003eWrite a basic Spark implementation of the iterative PageRank algorithm that takes sparse adjacency lists as input.\n\u003cbr  /\u003eMake sure that your implementation utilizes teleportation (1-damping/the number of nodes in the network), and further, distributes the mass of dangling nodes with each iterationso that the output of each iteration is correctly normalized (sums to 1).\u003c/p\u003e\n\u003cp\u003e[\u003cstrong\u003eNOTE:\u003c/strong\u003e The PageRank algorithm assumes that a random surfer (walker), starting from a random web page,chooses the next page to which it will move by clicking at random, with probability d, one of the hyperlinks in the current page. This probability is represented by a so-called ‘damping factor’ d, where d ∈ (0, 1). Otherwise, with probability (1 − d), the surfer jumps to any web page in the network. If a page is a dangling end, meaning it has no outgoing hyperlinks, the random surfer selects an arbitrary web page from a uniform distribution and “teleports” to that page]\u003c/p\u003e\n\u003cp\u003eIn your Spark solution, please use broadcast variables and caching to make sure your code is as efficient as possible.\u003c/p\u003e\n\u003cp\u003eAs you build your code, use the test data from S3 or \u003ca href\u003d\"https://www.dropbox.com/sh/2c0k5adwz36lkcw/AAAAKsjQfF9uHfv-X9mCqr9wa?dl\u003d0\"\u003eDropBox\u003c/a\u003e under subfolder HW7.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003es3://ucb-mids-mls-networks/PageRank-test.txt\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003ewith teleportation parameter set to 0.15 (1-d, where d, the damping factor is set to 0.85), and crosscheck your work with the true result, displayed in the first image in the \u003ca href\u003d\"https://en.wikipedia.org/wiki/PageRank\"\u003eWikipedia\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eHere are the contents of the PageRank-test.txt file:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eB       {\u0027C\u0027: 1}\nC       {\u0027B\u0027: 1}\nD       {\u0027A\u0027: 1, \u0027B\u0027: 1}\nE       {\u0027D\u0027: 1, \u0027B\u0027: 1, \u0027F\u0027: 1}\nF       {\u0027B\u0027: 1, \u0027E\u0027: 1}\nG       {\u0027B\u0027: 1, \u0027E\u0027: 1}\nH       {\u0027B\u0027: 1, \u0027E\u0027: 1}\nI       {\u0027B\u0027: 1, \u0027E\u0027: 1}\nJ       {\u0027E\u0027: 1}\nK       {\u0027E\u0027: 1}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eAnd here for reference are the corresponding PageRank probabilities:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eA,0.033\nB,0.384\nC,0.343\nD,0.039\nE,0.081\nF,0.039\nG,0.016\nH,0.016\nI,0.016\nJ,0.016\nK,0.016\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eRun this experiment locally first. Report the local configuration that you used and how long in minutes and seconds it takes to complete your job.\u003c/p\u003e\n\u003cp\u003eRepeat this experiment on AWS. Report the AWS cluster configuration that you used and how long in minutes and seconds it takes to complete your job. (in your notebook, cat the cluster config file)\u003c/p\u003e\n"
+      },
+      "dateCreated": "Apr 18, 2016 9:00:01 PM",
+      "dateStarted": "Apr 18, 2016 9:39:56 PM",
+      "dateFinished": "Apr 18, 2016 9:39:57 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    node_list.append((node, neighbors.keys()))\n    for neighbor in neighbors:\n        node_list.append((neighbor, []))\n    return node_list\n\ndef adjustRank(rank, mass):\n    adj_rank \u003d 0.0\n    if rank is not None:\n        adj_rank \u003d rank\n    return d*adj_rank + d*mass/n + t\n\n\n\n# damping parameter\nd \u003d 0.85\n\nD \u003d sc.textFile(\"/user/rcordell/hw13/in/PageRank-test.txt\")\n\ngraph \u003d D.flatMap(lambda line: line_splitter(line)).reduceByKey(lambda a,b:a+b).cache()\n\n# compute the number of nodes\nn \u003d graph.count()\n\n# compute teleportation factor\nt \u003d (1.0-d)/n\n\n# prime the pump with the initial page rank for each node \u003d 1/n\nadj_list \u003d graph.map(lambda (node, outlinks): (node, (1.0/n, outlinks)))\n\nfor i in range(0,30):\n    dangling_mass \u003d adj_list.filter(lambda x: len(x[1][1])\u003d\u003d0).map(lambda x: x[1][0]).reduce(lambda x,y:x+y)\n\n    distributed_mass \u003d adj_list.filter(lambda (node, (rank,outlinks)): len(outlinks) \u003e 0)\\\n        .map(lambda (node, (rank, outlinks)): (rank/len(outlinks), outlinks))\\\n        .flatMapValues(lambda x:x)\\\n        .map(lambda (rank, outlink): (outlink, rank))\\\n        .reduceByKey(lambda x,y: x+y)\n\n    adj_list\u003dgraph.leftOuterJoin(distributed_mass)\\\n        .map(lambda (node, (outlinks, rank)):(node, (rank,outlinks)))\\\n        .map(lambda (node, (rank, outlinks)):(node, (adjustRank(rank, dangling_mass), outlinks)) )\n        \n\nfor node in  adj_list.sortBy(lambda x: -x[1][0]).take(5):\n    print node[0], node[1][0]\n",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 22, 2016 7:51:35 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461038638548_1774464072",
+      "id": "20160418-210358_1959748980",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "B 0.383410412554\nC 0.343378600107\nE 0.0808856932689\nD 0.0390870921233\nF 0.0390870921233\n"
+      },
+      "dateCreated": "Apr 18, 2016 9:03:58 PM",
+      "dateStarted": "Apr 22, 2016 7:51:35 PM",
+      "dateFinished": "Apr 22, 2016 7:51:37 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "                page_rank +\u003d intermediate_value\n        page_rank \u003d self.options.s*page_rank + \\\n                    self.options.s*ip/self.options.n + \\\n                    (1.0-self.options.s)/self.options.n",
+      "dateUpdated": "Apr 18, 2016 11:44:26 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461039928242_-1077283861",
+      "id": "20160418-212528_431235186",
+      "dateCreated": "Apr 18, 2016 9:25:28 PM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "MIDS-W261-HW13-Cordell",
+  "id": "2BJEZBD35",
+  "angularObjects": {
+    "2BGUENPZ3": [],
+    "2BHWP8SB9": [],
+    "2BJ4WNTMK": [],
+    "2BEYU77A3": [],
+    "2BGD2YP6V": [],
+    "2BEZHMFE8": [],
+    "2BFPZWD7A": [],
+    "2BHBMNNHJ": [],
+    "2BFE5ZB9F": [],
+    "2BGYWJRFF": [],
+    "2BESSK699": [],
+    "2BGKFSKEQ": [],
+    "2BG3HGBMV": [],
+    "2BHEQK6M5": [],
+    "2BHVGJCK8": [],
+    "2BF8DDP2Y": [],
+    "2BGUDF8DW": [],
+    "2BEW9U39K": []
+  },
+  "config": {},
+  "info": {}
+}
