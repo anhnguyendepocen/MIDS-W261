@@ -1,0 +1,334 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n## PySpark PageRank Conversion\n\nThis PySpark program convers the PageRank toy graph into a list of edges in a format that can be\nconsumed by the GraphX GraphLoader. The resulting edge list is saved as a text file to the disk.",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 29, 2016 12:21:16 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461912051492_928720334",
+      "id": "20160428-234051_212102560",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "\u003ch2\u003ePySpark PageRank Conversion\u003c/h2\u003e\n\u003cp\u003eThis PySpark program convers the PageRank toy graph into a list of edges in a format that can be\n\u003cbr  /\u003econsumed by the GraphX GraphLoader. The resulting edge list is saved as a text file to the disk.\u003c/p\u003e\n"
+      },
+      "dateCreated": "Apr 28, 2016 11:40:51 PM",
+      "dateStarted": "Apr 28, 2016 11:42:08 PM",
+      "dateFinished": "Apr 28, 2016 11:42:08 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\n\n# This little bit of PySpark code takes the \"toy\" PageRank file and transforms it into a file that can be read by\n# the GraphX GraphLoader. The map function takes each line and parses out the outlink nodes in the adjacency list\n# and emits a tuple for each (node, neighbor) in the line. The PySpark driver collects the results and writes them\n# to a file while converting the single letter character node names to their ASCII code equivalent. This is because\n# the GraphX GraphLoader only deals with numeric node ids for the edges.\n\nimport re\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    for neighbor in neighbors:\n        node_list.append((node, neighbor))\n    return node_list\n\n\nG \u003d sc.textFile(\"/user/rcordell/hw13/in/PageRank-test.txt\").flatMap(lambda line: line_splitter(line)).collect()\n\nwith open(\"/Users/rcordell/Documents/MIDS/W261/week13/hw13/tst.txt\",\u0027w\u0027) as o:\n    for pair in G:\n        o.write(\u0027{0} {1}\\n\u0027.format(ord(pair[0]),(ord(pair[1]))))\n",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 28, 2016 11:37:19 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461906569863_1630476089",
+      "id": "20160428-220929_359292827",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": ""
+      },
+      "dateCreated": "Apr 28, 2016 10:09:29 PM",
+      "dateStarted": "Apr 28, 2016 11:25:20 PM",
+      "dateFinished": "Apr 28, 2016 11:25:20 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n## GraphX Scala Program\n\nThis program loads the toy PageRank edge list converted by the PySpark code into a GraphX graph and performs a static\nPage Rank of 10 iterations and the prints out the entire node ranking.",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 28, 2016 11:40:41 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461911857767_-1863126599",
+      "id": "20160428-233737_1438383765",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "\u003ch2\u003eGraphX Scala Program\u003c/h2\u003e\n\u003cp\u003eThis program loads the toy PageRank edge list converted by the PySpark code into a GraphX graph and performs a static\n\u003cbr  /\u003ePage Rank of 10 iterations and the prints out the entire node ranking.\u003c/p\u003e\n"
+      },
+      "dateCreated": "Apr 28, 2016 11:37:37 PM",
+      "dateStarted": "Apr 28, 2016 11:40:38 PM",
+      "dateFinished": "Apr 28, 2016 11:40:38 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "import org.apache.spark._\nimport org.apache.spark.graphx._\nimport org.apache.spark.rdd.RDD\n\nval graph \u003d GraphLoader.edgeListFile(sc, \"/user/rcordell/hw13/in/tst.txt\")\nval ranks \u003d graph.staticPageRank(10).vertices.sortBy(_._2, false)\nranks.collect().foreach{ println }",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 28, 2016 11:26:38 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461905970358_-92688352",
+      "id": "20160428-215930_1628629136",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "import org.apache.spark._\nimport org.apache.spark.graphx._\nimport org.apache.spark.rdd.RDD\ngraph: org.apache.spark.graphx.Graph[Int,Int] \u003d org.apache.spark.graphx.impl.GraphImpl@1b4ecf87\nranks: org.apache.spark.rdd.RDD[(org.apache.spark.graphx.VertexId, Double)] \u003d MapPartitionsRDD[6600] at sortBy at \u003cconsole\u003e:129\n(66,2.837824310201201)\n(67,2.4868526601543555)\n(69,0.7503400819355781)\n(70,0.3625952805244703)\n(68,0.3625952805244703)\n(65,0.3040900819355781)\n(74,0.15)\n(72,0.15)\n(71,0.15)\n(73,0.15)\n(75,0.15)\n"
+      },
+      "dateCreated": "Apr 28, 2016 9:59:30 PM",
+      "dateStarted": "Apr 28, 2016 11:26:38 PM",
+      "dateFinished": "Apr 28, 2016 11:26:40 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n## Working With Wikipedia Test Data\n\nHere we are working with a ~3MB subset of the Wikipedia outlink data as a test.",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 28, 2016 11:53:57 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461912775467_89411651",
+      "id": "20160428-235255_1396199372",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "\u003ch2\u003eWorking With Wikipedia Test Data\u003c/h2\u003e\n\u003cp\u003eHere we are working with a ~3MB subset of the Wikipedia outlink data as a test.\u003c/p\u003e\n"
+      },
+      "dateCreated": "Apr 28, 2016 11:52:55 PM",
+      "dateStarted": "Apr 28, 2016 11:53:55 PM",
+      "dateFinished": "Apr 28, 2016 11:53:55 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\n\n# This little bit of PySpark code takes the \"toy\" PageRank file and transforms it into a file that can be read by\n# the GraphX GraphLoader. The map function takes each line and parses out the outlink nodes in the adjacency list\n# and emits a tuple for each (node, neighbor) in the line. The PySpark driver collects the results and writes them\n# to a file \n\nimport re\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    for neighbor in neighbors:\n        node_list.append((node, neighbor))\n    return node_list\n\n\nG \u003d sc.textFile(\"/user/rcordell/hw13/in/test-out.txt\").flatMap(lambda line: line_splitter(line)).collect()\n\nwith open(\"/Users/rcordell/Documents/MIDS/W261/week13/hw13/tst1.txt\",\u0027w\u0027) as o:\n    for pair in G:\n        o.write(\u0027{0} {1}\\n\u0027.format(pair[0],pair[1]))\n",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 28, 2016 11:51:43 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461912628215_-1054678336",
+      "id": "20160428-235028_1243072486",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": ""
+      },
+      "dateCreated": "Apr 28, 2016 11:50:28 PM",
+      "dateStarted": "Apr 28, 2016 11:51:43 PM",
+      "dateFinished": "Apr 28, 2016 11:51:44 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "import org.apache.spark._\nimport org.apache.spark.graphx._\nimport org.apache.spark.rdd.RDD\n\nval graph \u003d GraphLoader.edgeListFile(sc, \"/user/rcordell/hw13/in/tst1.txt\")\nval ranks \u003d graph.staticPageRank(10).vertices.sortBy(_._2, false)\nranks.take(20).foreach{ println }",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 28, 2016 11:52:24 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461908976000_661874284",
+      "id": "20160428-224936_1408643142",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "import org.apache.spark._\nimport org.apache.spark.graphx._\nimport org.apache.spark.rdd.RDD\ngraph: org.apache.spark.graphx.Graph[Int,Int] \u003d org.apache.spark.graphx.impl.GraphImpl@7bef6f8b\nranks: org.apache.spark.rdd.RDD[(org.apache.spark.graphx.VertexId, Double)] \u003d MapPartitionsRDD[6764] at sortBy at \u003cconsole\u003e:143\n(13455888,1.2697806170234884)\n(1184351,0.9284541116087716)\n(1384888,0.8460163125657093)\n(6113490,0.813964229232376)\n(14503688,0.7093941522912309)\n(7868989,0.66)\n(6237129,0.6541898960382543)\n(7576704,0.6499766070049642)\n(4695850,0.6283892799160649)\n(4196067,0.6273744081068288)\n(14677501,0.6204262787015041)\n(15108172,0.6195093079529791)\n(6076759,0.6171169606303611)\n(10595788,0.59625)\n(14741692,0.59625)\n(1446779,0.5951147771147772)\n(12074312,0.5895936718237293)\n(14503460,0.5617281681426348)\n(14881689,0.5533498267554932)\n(5051368,0.5481766452690359)\n"
+      },
+      "dateCreated": "Apr 28, 2016 10:49:36 PM",
+      "dateStarted": "Apr 28, 2016 11:52:24 PM",
+      "dateFinished": "Apr 28, 2016 11:52:30 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\n\n# This little bit of PySpark code takes the \"toy\" PageRank file and transforms it into a file that can be read by\n# the GraphX GraphLoader. The map function takes each line and parses out the outlink nodes in the adjacency list\n# and emits a tuple for each (node, neighbor) in the line. The PySpark driver collects the results and writes them\n# to a file \n\nimport re\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    for neighbor in neighbors:\n        node_list.append((node, neighbor))\n    return node_list\n\nwith open(\"/Users/rcordell/Documents/MIDS/W261/week13/hw13/all-edges-out.txt\",\u0027w\u0027) as o:\n    with open(\"~/Documents/MIDS/W261/week13/hw13/all-pages-indexed-out.txt\") as adjFile:\n        for line in adjFile.readlines():\n            for pair in line_splitter(line):\n                 o.write(\u0027{0} {1}\\n\u0027.format(pair[0],pair[1]))\n        \n\n",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 29, 2016 12:09:41 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461912570423_375974605",
+      "id": "20160428-234930_667395550",
+      "dateCreated": "Apr 28, 2016 11:49:30 PM",
+      "dateStarted": "Apr 29, 2016 12:09:41 AM",
+      "dateFinished": "Apr 29, 2016 12:09:41 AM",
+      "status": "ERROR",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "",
+      "dateUpdated": "Apr 29, 2016 12:02:33 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461913109569_1803759161",
+      "id": "20160428-235829_1100875159",
+      "dateCreated": "Apr 28, 2016 11:58:29 PM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "GraphX Test",
+  "id": "2BJEEG9B5",
+  "angularObjects": {
+    "2BGUENPZ3": [],
+    "2BHWP8SB9": [],
+    "2BJ4WNTMK": [],
+    "2BEYU77A3": [],
+    "2BGD2YP6V": [],
+    "2BEZHMFE8": [],
+    "2BFPZWD7A": [],
+    "2BHBMNNHJ": [],
+    "2BFE5ZB9F": [],
+    "2BGYWJRFF": [],
+    "2BESSK699": [],
+    "2BGKFSKEQ": [],
+    "2BG3HGBMV": [],
+    "2BHEQK6M5": [],
+    "2BHVGJCK8": [],
+    "2BF8DDP2Y": [],
+    "2BGUDF8DW": [],
+    "2BEW9U39K": []
+  },
+  "config": {
+    "looknfeel": "default"
+  },
+  "info": {}
+}
