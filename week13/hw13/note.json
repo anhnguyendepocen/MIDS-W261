@@ -2,8 +2,7 @@
   "paragraphs": [
     {
       "text": "%md\n\n## HW 13.1: Spark implementation of basic PageRank\n\nWrite a basic Spark implementation of the iterative PageRank algorithm that takes sparse adjacency lists as input.\nMake sure that your implementation utilizes teleportation (1-damping/the number of nodes in the network), and further, distributes the mass of dangling nodes with each iterationso that the output of each iteration is correctly normalized (sums to 1).\n\n[**NOTE:** The PageRank algorithm assumes that a random surfer (walker), starting from a random web page,chooses the next page to which it will move by clicking at random, with probability d, one of the hyperlinks in the current page. This probability is represented by a so-called ‘damping factor’ d, where d ∈ (0, 1). Otherwise, with probability (1 − d), the surfer jumps to any web page in the network. If a page is a dangling end, meaning it has no outgoing hyperlinks, the random surfer selects an arbitrary web page from a uniform distribution and “teleports” to that page]\n\nIn your Spark solution, please use broadcast variables and caching to make sure your code is as efficient as possible.\n\nAs you build your code, use the test data from S3 or [DropBox](https://www.dropbox.com/sh/2c0k5adwz36lkcw/AAAAKsjQfF9uHfv-X9mCqr9wa?dl\u003d0) under subfolder HW7.\n\n    s3://ucb-mids-mls-networks/PageRank-test.txt\n    \nwith teleportation parameter set to 0.15 (1-d, where d, the damping factor is set to 0.85), and crosscheck your work with the true result, displayed in the first image in the [Wikipedia](https://en.wikipedia.org/wiki/PageRank)\n\nHere are the contents of the PageRank-test.txt file:\n\n    B       {\u0027C\u0027: 1}\n    C       {\u0027B\u0027: 1}\n    D       {\u0027A\u0027: 1, \u0027B\u0027: 1}\n    E       {\u0027D\u0027: 1, \u0027B\u0027: 1, \u0027F\u0027: 1}\n    F       {\u0027B\u0027: 1, \u0027E\u0027: 1}\n    G       {\u0027B\u0027: 1, \u0027E\u0027: 1}\n    H       {\u0027B\u0027: 1, \u0027E\u0027: 1}\n    I       {\u0027B\u0027: 1, \u0027E\u0027: 1}\n    J       {\u0027E\u0027: 1}\n    K       {\u0027E\u0027: 1}\n\nAnd here for reference are the corresponding PageRank probabilities:\n\n    A,0.033\n    B,0.384\n    C,0.343\n    D,0.039\n    E,0.081\n    F,0.039\n    G,0.016\n    H,0.016\n    I,0.016\n    J,0.016\n    K,0.016\n\nRun this experiment locally first. Report the local configuration that you used and how long in minutes and seconds it takes to complete your job.\n\nRepeat this experiment on AWS. Report the AWS cluster configuration that you used and how long in minutes and seconds it takes to complete your job. (in your notebook, cat the cluster config file)\n\n",
-      "authenticationInfo": {},
-      "dateUpdated": "Apr 18, 2016 9:39:59 PM",
+      "dateUpdated": "Apr 29, 2016 2:31:10 AM",
       "config": {
         "colWidth": 12.0,
         "graph": {
@@ -23,23 +22,21 @@
         "params": {},
         "forms": {}
       },
-      "jobName": "paragraph_1461038401462_-917773411",
-      "id": "20160418-210001_514436337",
+      "jobName": "paragraph_1461897070224_-1017378774",
+      "id": "20160429-023110_1368796736",
       "result": {
         "code": "SUCCESS",
         "type": "HTML",
         "msg": "\u003ch2\u003eHW 13.1: Spark implementation of basic PageRank\u003c/h2\u003e\n\u003cp\u003eWrite a basic Spark implementation of the iterative PageRank algorithm that takes sparse adjacency lists as input.\n\u003cbr  /\u003eMake sure that your implementation utilizes teleportation (1-damping/the number of nodes in the network), and further, distributes the mass of dangling nodes with each iterationso that the output of each iteration is correctly normalized (sums to 1).\u003c/p\u003e\n\u003cp\u003e[\u003cstrong\u003eNOTE:\u003c/strong\u003e The PageRank algorithm assumes that a random surfer (walker), starting from a random web page,chooses the next page to which it will move by clicking at random, with probability d, one of the hyperlinks in the current page. This probability is represented by a so-called ‘damping factor’ d, where d ∈ (0, 1). Otherwise, with probability (1 − d), the surfer jumps to any web page in the network. If a page is a dangling end, meaning it has no outgoing hyperlinks, the random surfer selects an arbitrary web page from a uniform distribution and “teleports” to that page]\u003c/p\u003e\n\u003cp\u003eIn your Spark solution, please use broadcast variables and caching to make sure your code is as efficient as possible.\u003c/p\u003e\n\u003cp\u003eAs you build your code, use the test data from S3 or \u003ca href\u003d\"https://www.dropbox.com/sh/2c0k5adwz36lkcw/AAAAKsjQfF9uHfv-X9mCqr9wa?dl\u003d0\"\u003eDropBox\u003c/a\u003e under subfolder HW7.\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003es3://ucb-mids-mls-networks/PageRank-test.txt\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003ewith teleportation parameter set to 0.15 (1-d, where d, the damping factor is set to 0.85), and crosscheck your work with the true result, displayed in the first image in the \u003ca href\u003d\"https://en.wikipedia.org/wiki/PageRank\"\u003eWikipedia\u003c/a\u003e\u003c/p\u003e\n\u003cp\u003eHere are the contents of the PageRank-test.txt file:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eB       {\u0027C\u0027: 1}\nC       {\u0027B\u0027: 1}\nD       {\u0027A\u0027: 1, \u0027B\u0027: 1}\nE       {\u0027D\u0027: 1, \u0027B\u0027: 1, \u0027F\u0027: 1}\nF       {\u0027B\u0027: 1, \u0027E\u0027: 1}\nG       {\u0027B\u0027: 1, \u0027E\u0027: 1}\nH       {\u0027B\u0027: 1, \u0027E\u0027: 1}\nI       {\u0027B\u0027: 1, \u0027E\u0027: 1}\nJ       {\u0027E\u0027: 1}\nK       {\u0027E\u0027: 1}\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eAnd here for reference are the corresponding PageRank probabilities:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003eA,0.033\nB,0.384\nC,0.343\nD,0.039\nE,0.081\nF,0.039\nG,0.016\nH,0.016\nI,0.016\nJ,0.016\nK,0.016\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eRun this experiment locally first. Report the local configuration that you used and how long in minutes and seconds it takes to complete your job.\u003c/p\u003e\n\u003cp\u003eRepeat this experiment on AWS. Report the AWS cluster configuration that you used and how long in minutes and seconds it takes to complete your job. (in your notebook, cat the cluster config file)\u003c/p\u003e\n"
       },
-      "dateCreated": "Apr 18, 2016 9:00:01 PM",
-      "dateStarted": "Apr 18, 2016 9:39:56 PM",
-      "dateFinished": "Apr 18, 2016 9:39:57 PM",
-      "status": "FINISHED",
+      "dateCreated": "Apr 29, 2016 2:31:10 AM",
+      "status": "READY",
+      "errorMessage": "",
       "progressUpdateIntervalMs": 500
     },
     {
-      "text": "%pyspark\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    node_list.append((node, neighbors.keys()))\n    for neighbor in neighbors:\n        node_list.append((neighbor, []))\n    return node_list\n\ndef adjustRank(rank, mass):\n    adj_rank \u003d 0.0\n    if rank is not None:\n        adj_rank \u003d rank\n    return d*adj_rank + d*mass/n + t\n\n\n\n# damping parameter\nd \u003d 0.85\n\nD \u003d sc.textFile(\"/user/rcordell/hw13/in/PageRank-test.txt\")\n\ngraph \u003d D.flatMap(lambda line: line_splitter(line)).reduceByKey(lambda a,b:a+b).cache()\n\n# compute the number of nodes\nn \u003d graph.count()\n\n# compute teleportation factor\nt \u003d (1.0-d)/n\n\n# prime the pump with the initial page rank for each node \u003d 1/n\nadj_list \u003d graph.map(lambda (node, outlinks): (node, (1.0/n, outlinks)))\n\nfor i in range(0,30):\n    dangling_mass \u003d adj_list.filter(lambda x: len(x[1][1])\u003d\u003d0).map(lambda x: x[1][0]).reduce(lambda x,y:x+y)\n\n    distributed_mass \u003d adj_list.filter(lambda (node, (rank,outlinks)): len(outlinks) \u003e 0)\\\n        .map(lambda (node, (rank, outlinks)): (rank/len(outlinks), outlinks))\\\n        .flatMapValues(lambda x:x)\\\n        .map(lambda (rank, outlink): (outlink, rank))\\\n        .reduceByKey(lambda x,y: x+y)\n\n    adj_list\u003dgraph.leftOuterJoin(distributed_mass)\\\n        .map(lambda (node, (outlinks, rank)):(node, (rank,outlinks)))\\\n        .map(lambda (node, (rank, outlinks)):(node, (adjustRank(rank, dangling_mass), outlinks)) )\n        \n\nfor node in  adj_list.sortBy(lambda x: -x[1][0]).take(5):\n    print node[0], node[1][0]\n",
-      "authenticationInfo": {},
-      "dateUpdated": "Apr 28, 2016 6:40:50 PM",
+      "text": "%pyspark\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    node_list.append((node, neighbors.keys()))\n    for neighbor in neighbors:\n        node_list.append((neighbor, []))\n    return node_list\n\ndef adjustRank(rank, mass):\n    adj_rank \u003d 0.0\n    if rank is not None:\n        adj_rank \u003d rank\n    return d*adj_rank + d*mass/n + t\n\n\n\n# damping parameter\nd \u003d 0.85\n\n#D \u003d sc.textFile(\"/user/rcordell/hw13/in/PageRank-test.txt\")\nD \u003d sc.textFile(\"s3://hadoopspark/hw13/in/PageRank-test.txt\")\n\ngraph \u003d D.flatMap(lambda line: line_splitter(line)).reduceByKey(lambda a,b:a+b).cache()\n\n# compute the number of nodes\nn \u003d graph.count()\n\n# compute teleportation factor\nt \u003d (1.0-d)/n\n\n# prime the pump with the initial page rank for each node \u003d 1/n\nadj_list \u003d graph.map(lambda (node, outlinks): (node, (1.0/n, outlinks)))\n\nfor i in range(0,30):\n    dangling_mass \u003d adj_list.filter(lambda x: len(x[1][1])\u003d\u003d0).map(lambda x: x[1][0]).reduce(lambda x,y:x+y)\n\n    distributed_mass \u003d adj_list.filter(lambda (node, (rank,outlinks)): len(outlinks) \u003e 0)\\\n        .map(lambda (node, (rank, outlinks)): (rank/len(outlinks), outlinks))\\\n        .flatMapValues(lambda x:x)\\\n        .map(lambda (rank, outlink): (outlink, rank))\\\n        .reduceByKey(lambda x,y: x+y)\n\n    adj_list\u003dgraph.leftOuterJoin(distributed_mass)\\\n        .map(lambda (node, (outlinks, rank)):(node, (rank,outlinks)))\\\n        .map(lambda (node, (rank, outlinks)):(node, (adjustRank(rank, dangling_mass), outlinks)) )\n        \n\nfor node in  adj_list.sortBy(lambda x: -x[1][0]).collect():\n    print node[0], node[1][0]\n",
+      "dateUpdated": "Apr 29, 2016 2:35:14 AM",
       "config": {
         "colWidth": 12.0,
         "graph": {
@@ -58,23 +55,22 @@
         "params": {},
         "forms": {}
       },
-      "jobName": "paragraph_1461038638548_1774464072",
-      "id": "20160418-210358_1959748980",
+      "jobName": "paragraph_1461897070225_-1017763523",
+      "id": "20160429-023110_942461175",
       "result": {
         "code": "SUCCESS",
         "type": "TEXT",
-        "msg": "B 0.383410412554\nC 0.343378600107\nE 0.0808856932689\nD 0.0390870921233\nF 0.0390870921233\n"
+        "msg": "B 0.375122070884\nC 0.336442930482\nE 0.0743699457012\nD 0.0375279788977\nF 0.0375279788977\nA 0.0324058853132\nL 0.0234505043344\nG 0.0164564942698\nI 0.0164564942698\nK 0.0164564942698\nH 0.0164564942698\nJ 0.0164564942698\n"
       },
-      "dateCreated": "Apr 18, 2016 9:03:58 PM",
-      "dateStarted": "Apr 28, 2016 6:40:50 PM",
-      "dateFinished": "Apr 28, 2016 6:41:08 PM",
+      "dateCreated": "Apr 29, 2016 2:31:10 AM",
+      "dateStarted": "Apr 29, 2016 2:35:14 AM",
+      "dateFinished": "Apr 29, 2016 2:35:23 AM",
       "status": "FINISHED",
       "progressUpdateIntervalMs": 500
     },
     {
-      "text": "%pyspark\n\nimport re\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    node_list.append((node, neighbors.keys()))\n    for neighbor in neighbors:\n        node_list.append((neighbor, []))\n    return node_list\n\ndef index_line_splitter(line):\n    article, index, in_degree, out_degree \u003d re.split(\u0027\\t\u0027, line.strip())\n    return (index, article)\n\ndef adjustRank(rank, mass):\n    adj_rank \u003d 0.0\n    if rank is not None:\n        adj_rank \u003d rank\n    return d*adj_rank + d*mass/n + t\n\n\ndef page_rank(graph_path, index_path\u003dNone, d\u003d0.85):\n    D \u003d sc.textFile(graph_path, use_unicode\u003dFalse)\n    I \u003d sc.textFile(index_path, use_unicode\u003dFalse)\n    \n    graph \u003d D.flatMap(lambda line: line_splitter(line)).reduceByKey(lambda a,b:a+b).cache()\n    \n    # compute the number of nodes\n    n \u003d graph.count()\n    \n    # compute teleportation factor\n    t \u003d (1.0-d)/n\n    \n    # prime the pump with the initial page rank for each node \u003d 1/n\n    adj_list \u003d graph.map(lambda (node, outlinks): (node, (1.0/n, outlinks)))\n    \n    for i in range(0,30):\n        dangling_mass \u003d adj_list.filter(lambda x: len(x[1][1])\u003d\u003d0).map(lambda x: x[1][0]).reduce(lambda x,y:x+y)\n    \n        distributed_mass \u003d adj_list.filter(lambda (node, (rank,outlinks)): len(outlinks) \u003e 0)\\\n            .map(lambda (node, (rank, outlinks)): (rank/len(outlinks), outlinks))\\\n            .flatMapValues(lambda x:x)\\\n            .map(lambda (rank, outlink): (outlink, rank))\\\n            .reduceByKey(lambda x,y: x+y)\n    \n        adj_list\u003dgraph.leftOuterJoin(distributed_mass)\\\n            .map(lambda (node, (outlinks, rank)):(node, (rank,outlinks)))\\\n            .map(lambda (node, (rank, outlinks)):(node, (adjustRank(rank, dangling_mass), outlinks)) )\n    \n    if index_path:\n        article_list \u003d I.map(lambda line: index_line_splitter(line))\n        articles \u003d article_list.join(adj_list)\n        articles.collect()\n#        for node in articles.collect():\n#            print node\n#        for node in articles.sortBy(lambda x: -x[2][0]).collect():\n#            print node[1], node[2][0]\n    else:\n        # take the Top N based on PageRank\n        for node in  adj_list.sortBy(lambda x: -x[1][0]).take(20):\n            print node[0], node[1][0]\n\npage_rank(\"/user/rcordell/hw13/in/PageRank-test.txt\",\"/user/rcordell/hw13/in/indices-test.txt\")",
-      "authenticationInfo": {},
-      "dateUpdated": "Apr 28, 2016 6:58:22 PM",
+      "text": "%md\n\n### PageRank Test\n\nAWS EMR cluster of 1 Master and 2 Task machines, m3.xlarge takes ~9 seconds\n\n### PageRank with Indices Test\n\nBelow we test PageRank and an index file like we would find with the wikipedia data. This test is to understand how to join the article index\nwith the resulting page rank data. The format of the indices-test.txt file is:\n\n    (article name) \\t (index) \\t (in degree) \\t (out degree)\n    \nThe test file looks like:\n\n    (\u0027A\u0027, (\u0027! $var \u003d \u0026quot;\u0026quot;\u0027, (0.032405885313249345, [])))\n    (\u0027I\u0027, (\u0027!!! (Chk Chk Chk)\u0027, (0.016456494269789405, [\u0027B\u0027, \u0027E\u0027])))\n    (\u0027E\u0027, (\u0027! -attention-\u0027, (0.07436994570121233, [\u0027B\u0027, \u0027D\u0027, \u0027F\u0027])))\n    (\u0027H\u0027, (\u0027!! (disambiguation)\u0027, (0.016456494269789405, [\u0027B\u0027, \u0027E\u0027])))\n    (\u0027D\u0027, (\u0027! (disambiguation)\u0027, (0.037527978897670906, [\u0027A\u0027, \u0027B\u0027])))\n    (\u0027C\u0027, (\u0027! (album)\u0027, (0.33644293048159163, [\u0027B\u0027])))\n    (\u0027K\u0027, (\u0027!!! (nlow)\u0027, (0.016456494269789405, [\u0027E\u0027, \u0027L\u0027])))\n    (\u0027G\u0027, (\u0027!! (chess)\u0027, (0.016456494269789405, [\u0027B\u0027, \u0027E\u0027])))\n    (\u0027J\u0027, (\u0027!!! (album)\u0027, (0.016456494269789405, [\u0027E\u0027])))\n    (\u0027B\u0027, (\u0027! (CONFIG.SYS directive)\u0027, (0.3751220708839311, [\u0027C\u0027])))\n    (\u0027F\u0027, (\u0027! Time Zone\u0027, (0.037527978897670906, [\u0027B\u0027, \u0027E\u0027])))\n",
+      "dateUpdated": "Apr 29, 2016 2:56:56 AM",
       "config": {
         "colWidth": 12.0,
         "graph": {
@@ -87,22 +83,125 @@
           "scatter": {}
         },
         "enabled": true,
-        "editorMode": "ace/mode/scala"
+        "editorMode": "ace/mode/markdown",
+        "editorHide": false
       },
       "settings": {
         "params": {},
         "forms": {}
       },
-      "jobName": "paragraph_1461039928242_-1077283861",
-      "id": "20160418-212528_431235186",
+      "jobName": "paragraph_1461897340200_-1724948970",
+      "id": "20160429-023540_159464760",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "\u003ch3\u003ePageRank Test\u003c/h3\u003e\n\u003cp\u003eAWS EMR cluster of 1 Master and 2 Task machines, m3.xlarge takes ~9 seconds\u003c/p\u003e\n\u003ch3\u003ePageRank with Indices Test\u003c/h3\u003e\n\u003cp\u003eBelow we test PageRank and an index file like we would find with the wikipedia data. This test is to understand how to join the article index\n\u003cbr  /\u003ewith the resulting page rank data. The format of the indices-test.txt file is:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e(article name) \\t (index) \\t (in degree) \\t (out degree)\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003eThe test file looks like:\u003c/p\u003e\n\u003cpre\u003e\u003ccode\u003e(\u0027A\u0027, (\u0027! $var \u003d \u0026amp;quot;\u0026amp;quot;\u0027, (0.032405885313249345, [])))\n(\u0027I\u0027, (\u0027!!! (Chk Chk Chk)\u0027, (0.016456494269789405, [\u0027B\u0027, \u0027E\u0027])))\n(\u0027E\u0027, (\u0027! -attention-\u0027, (0.07436994570121233, [\u0027B\u0027, \u0027D\u0027, \u0027F\u0027])))\n(\u0027H\u0027, (\u0027!! (disambiguation)\u0027, (0.016456494269789405, [\u0027B\u0027, \u0027E\u0027])))\n(\u0027D\u0027, (\u0027! (disambiguation)\u0027, (0.037527978897670906, [\u0027A\u0027, \u0027B\u0027])))\n(\u0027C\u0027, (\u0027! (album)\u0027, (0.33644293048159163, [\u0027B\u0027])))\n(\u0027K\u0027, (\u0027!!! (nlow)\u0027, (0.016456494269789405, [\u0027E\u0027, \u0027L\u0027])))\n(\u0027G\u0027, (\u0027!! (chess)\u0027, (0.016456494269789405, [\u0027B\u0027, \u0027E\u0027])))\n(\u0027J\u0027, (\u0027!!! (album)\u0027, (0.016456494269789405, [\u0027E\u0027])))\n(\u0027B\u0027, (\u0027! (CONFIG.SYS directive)\u0027, (0.3751220708839311, [\u0027C\u0027])))\n(\u0027F\u0027, (\u0027! Time Zone\u0027, (0.037527978897670906, [\u0027B\u0027, \u0027E\u0027])))\n\u003c/code\u003e\u003c/pre\u003e\n"
+      },
+      "dateCreated": "Apr 29, 2016 2:35:40 AM",
+      "dateStarted": "Apr 29, 2016 2:56:56 AM",
+      "dateFinished": "Apr 29, 2016 2:56:56 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\n\nimport re\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    node_list.append((node, neighbors.keys()))\n    for neighbor in neighbors:\n        node_list.append((neighbor, []))\n    return node_list\n\ndef index_line_splitter(line):\n    article, index, in_degree, out_degree \u003d re.split(\u0027\\t\u0027, line.strip())\n    return (index, article)\n\ndef adjustRank(rank, mass):\n    adj_rank \u003d 0.0\n    if rank is not None:\n        adj_rank \u003d rank\n    return d*adj_rank + d*mass/n + t\n\n\ndef page_rank(graph_path, index_path\u003dNone, d\u003d0.85):\n    D \u003d sc.textFile(graph_path, use_unicode\u003dFalse)\n    I \u003d sc.textFile(index_path, use_unicode\u003dFalse)\n    \n    graph \u003d D.flatMap(lambda line: line_splitter(line)).reduceByKey(lambda a,b:a+b).cache()\n    \n    # compute the number of nodes\n    n \u003d graph.count()\n    \n    # compute teleportation factor\n    t \u003d (1.0-d)/n\n    \n    # prime the pump with the initial page rank for each node \u003d 1/n\n    adj_list \u003d graph.map(lambda (node, outlinks): (node, (1.0/n, outlinks)))\n    \n    for i in range(0,30):\n        dangling_mass \u003d adj_list.filter(lambda x: len(x[1][1])\u003d\u003d0).map(lambda x: x[1][0]).reduce(lambda x,y:x+y)\n    \n        distributed_mass \u003d adj_list.filter(lambda (node, (rank,outlinks)): len(outlinks) \u003e 0)\\\n            .map(lambda (node, (rank, outlinks)): (rank/len(outlinks), outlinks))\\\n            .flatMapValues(lambda x:x)\\\n            .map(lambda (rank, outlink): (outlink, rank))\\\n            .reduceByKey(lambda x,y: x+y)\n    \n        adj_list\u003dgraph.leftOuterJoin(distributed_mass)\\\n            .map(lambda (node, (outlinks, rank)):(node, (rank,outlinks)))\\\n            .map(lambda (node, (rank, outlinks)):(node, (adjustRank(rank, dangling_mass), outlinks)) )\n    \n    if index_path:\n        article_list \u003d I.map(lambda line: index_line_splitter(line))\n        articles \u003d article_list.join(adj_list)\n\n        for node in articles.sortBy(lambda x: -x[1][1][0]).collect():\n            print node[1], node[1][0]\n    else:\n        # take the Top N based on PageRank\n        for node in  adj_list.sortBy(lambda x: -x[1][0]).take(20):\n            print node[0], node[1][0]\n\npage_rank(\"s3://hadoopspark/hw13/in/PageRank-test.txt\",\"s3://hadoopspark/hw13/in/test1.txt\")",
+      "dateUpdated": "Apr 29, 2016 3:24:25 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala",
+        "lineNumbers": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461897070226_-1016609277",
+      "id": "20160429-023110_105587953",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "[(\u0027A\u0027, \u0027! $var \u003d \u0026quot;\u0026quot;\u0027), (\u0027B\u0027, \u0027! (CONFIG.SYS directive)\u0027), (\u0027C\u0027, \u0027! (album)\u0027), (\u0027D\u0027, \u0027! (disambiguation)\u0027), (\u0027E\u0027, \u0027! -attention-\u0027), (\u0027F\u0027, \u0027! Time Zone\u0027), (\u0027G\u0027, \u0027!! (chess)\u0027), (\u0027H\u0027, \u0027!! (disambiguation)\u0027), (\u0027I\u0027, \u0027!!! (Chk Chk Chk)\u0027), (\u0027J\u0027, \u0027!!! (album)\u0027), (\u0027K\u0027, \u0027!!! (nlow)\u0027)]\n"
+      },
+      "dateCreated": "Apr 29, 2016 2:31:10 AM",
+      "dateStarted": "Apr 29, 2016 3:18:07 AM",
+      "dateFinished": "Apr 29, 2016 3:18:15 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n\n## Wikipedia Page Rank\n\nRun your Spark PageRank implementation on the Wikipedia dataset for 10 iterations,\nand display the top 100 ranked nodes (with alpha \u003d 0.85).\n",
+      "dateUpdated": "Apr 29, 2016 3:28:24 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461897070226_-1016609277",
+      "id": "20160429-023110_795233649",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "\u003ch2\u003eWikipedia Page Rank\u003c/h2\u003e\n\u003cp\u003eRun your Spark PageRank implementation on the Wikipedia dataset for 10 iterations,\n\u003cbr  /\u003eand display the top 100 ranked nodes (with alpha \u003d 0.85).\u003c/p\u003e\n"
+      },
+      "dateCreated": "Apr 29, 2016 2:31:10 AM",
+      "dateStarted": "Apr 29, 2016 3:28:24 AM",
+      "dateFinished": "Apr 29, 2016 3:28:24 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\n\nimport re\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    node_list.append((node, neighbors.keys()))\n    for neighbor in neighbors:\n        node_list.append((neighbor, []))\n    return node_list\n\ndef index_line_splitter(line):\n    article, index, in_degree, out_degree \u003d re.split(\u0027\\t\u0027, line.strip())\n    return (index, article)\n\ndef adjustRank(rank, mass):\n    adj_rank \u003d 0.0\n    if rank is not None:\n        adj_rank \u003d rank\n    return d*adj_rank + d*mass/n + t\n\n\ndef page_rank(graph_path, index_path\u003dNone, d\u003d0.85):\n    D \u003d sc.textFile(graph_path, use_unicode\u003dFalse)\n    I \u003d sc.textFile(index_path, use_unicode\u003dFalse)\n    \n    graph \u003d D.flatMap(lambda line: line_splitter(line)).reduceByKey(lambda a,b:a+b).cache()\n    \n    # compute the number of nodes\n    n \u003d graph.count()\n    \n    # compute teleportation factor\n    t \u003d (1.0-d)/n\n    \n    # prime the pump with the initial page rank for each node \u003d 1/n\n    adj_list \u003d graph.map(lambda (node, outlinks): (node, (1.0/n, outlinks)))\n    \n    for i in range(0,10):\n        dangling_mass \u003d adj_list.filter(lambda x: len(x[1][1])\u003d\u003d0).map(lambda x: x[1][0]).reduce(lambda x,y:x+y)\n    \n        distributed_mass \u003d adj_list.filter(lambda (node, (rank,outlinks)): len(outlinks) \u003e 0)\\\n            .map(lambda (node, (rank, outlinks)): (rank/len(outlinks), outlinks))\\\n            .flatMapValues(lambda x:x)\\\n            .map(lambda (rank, outlink): (outlink, rank))\\\n            .reduceByKey(lambda x,y: x+y)\n    \n        adj_list\u003dgraph.leftOuterJoin(distributed_mass)\\\n            .map(lambda (node, (outlinks, rank)):(node, (rank,outlinks)))\\\n            .map(lambda (node, (rank, outlinks)):(node, (adjustRank(rank, dangling_mass), outlinks)) )\n    \n    if index_path:\n        article_list \u003d I.map(lambda line: index_line_splitter(line))\n        articles \u003d article_list.join(adj_list)\n\n        for node in articles.sortBy(lambda x: -x[1][1][0]).take(100):\n            print node[0], node[1][0]\n    else:\n        # take the Top N based on PageRank\n        for node in  adj_list.sortBy(lambda x: -x[1][0]).take(100):\n            print node[0], node[1][0]\n\npage_rank(\"s3://ucb-mids-mls-networks/wikipedia/all-pages-indexed-out.txt\",\"s3://ucb-mids-mls-networks/wikipedia/indices.txt\")",
+      "dateUpdated": "Apr 29, 2016 3:28:19 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461900349012_1779285855",
+      "id": "20160429-032549_1464887826",
       "result": {
         "code": "ERROR",
         "type": "TEXT",
-        "msg": "Py4JJavaError: An error occurred while calling z:org.apache.spark.api.python.PythonRDD.collectAndServe.\n: org.apache.spark.SparkException: Job 544 cancelled part of cancelled job group zeppelin-20160418-212528_431235186\n\tat org.apache.spark.scheduler.DAGScheduler.org$apache$spark$scheduler$DAGScheduler$$failJobAndIndependentStages(DAGScheduler.scala:1431)\n\tat org.apache.spark.scheduler.DAGScheduler.handleJobCancellation(DAGScheduler.scala:1370)\n\tat org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply$mcVI$sp(DAGScheduler.scala:783)\n\tat org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply(DAGScheduler.scala:783)\n\tat org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply(DAGScheduler.scala:783)\n\tat scala.collection.mutable.HashSet.foreach(HashSet.scala:79)\n\tat org.apache.spark.scheduler.DAGScheduler.handleJobGroupCancelled(DAGScheduler.scala:783)\n\tat org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:1619)\n\tat org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1599)\n\tat org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1588)\n\tat org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:48)\n\tat org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:620)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1832)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1845)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1858)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1929)\n\tat org.apache.spark.rdd.RDD$$anonfun$collect$1.apply(RDD.scala:927)\n\tat org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:150)\n\tat org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:111)\n\tat org.apache.spark.rdd.RDD.withScope(RDD.scala:316)\n\tat org.apache.spark.rdd.RDD.collect(RDD.scala:926)\n\tat org.apache.spark.api.python.PythonRDD$.collectAndServe(PythonRDD.scala:405)\n\tat org.apache.spark.api.python.PythonRDD.collectAndServe(PythonRDD.scala)\n\tat sun.reflect.GeneratedMethodAccessor90.invoke(Unknown Source)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:231)\n\tat py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:381)\n\tat py4j.Gateway.invoke(Gateway.java:259)\n\tat py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:133)\n\tat py4j.commands.CallCommand.execute(CallCommand.java:79)\n\tat py4j.GatewayConnection.run(GatewayConnection.java:209)\n\tat java.lang.Thread.run(Thread.java:745)\n\n(\u003cclass \u0027py4j.protocol.Py4JJavaError\u0027\u003e, Py4JJavaError(u\u0027An error occurred while calling z:org.apache.spark.api.python.PythonRDD.collectAndServe.\\n\u0027, JavaObject id\u003do19825), \u003ctraceback object at 0x108556290\u003e)"
+        "msg": "Py4JJavaError: An error occurred while calling z:org.apache.spark.api.python.PythonRDD.collectAndServe.\n: org.apache.spark.SparkException: Job 433 cancelled part of cancelled job group zeppelin-20160429-032549_1464887826\n\tat org.apache.spark.scheduler.DAGScheduler.org$apache$spark$scheduler$DAGScheduler$$failJobAndIndependentStages(DAGScheduler.scala:1431)\n\tat org.apache.spark.scheduler.DAGScheduler.handleJobCancellation(DAGScheduler.scala:1370)\n\tat org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply$mcVI$sp(DAGScheduler.scala:783)\n\tat org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply(DAGScheduler.scala:783)\n\tat org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply(DAGScheduler.scala:783)\n\tat scala.collection.mutable.HashSet.foreach(HashSet.scala:79)\n\tat org.apache.spark.scheduler.DAGScheduler.handleJobGroupCancelled(DAGScheduler.scala:783)\n\tat org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:1619)\n\tat org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1599)\n\tat org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1588)\n\tat org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:48)\n\tat org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:620)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1832)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1845)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1858)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1929)\n\tat org.apache.spark.rdd.RDD$$anonfun$collect$1.apply(RDD.scala:927)\n\tat org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:150)\n\tat org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:111)\n\tat org.apache.spark.rdd.RDD.withScope(RDD.scala:316)\n\tat org.apache.spark.rdd.RDD.collect(RDD.scala:926)\n\tat org.apache.spark.api.python.PythonRDD$.collectAndServe(PythonRDD.scala:405)\n\tat org.apache.spark.api.python.PythonRDD.collectAndServe(PythonRDD.scala)\n\tat sun.reflect.GeneratedMethodAccessor57.invoke(Unknown Source)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:606)\n\tat py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:231)\n\tat py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:381)\n\tat py4j.Gateway.invoke(Gateway.java:259)\n\tat py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:133)\n\tat py4j.commands.CallCommand.execute(CallCommand.java:79)\n\tat py4j.GatewayConnection.run(GatewayConnection.java:209)\n\tat java.lang.Thread.run(Thread.java:745)\n\n(\u003cclass \u0027py4j.protocol.Py4JJavaError\u0027\u003e, Py4JJavaError(u\u0027An error occurred while calling z:org.apache.spark.api.python.PythonRDD.collectAndServe.\\n\u0027, JavaObject id\u003do15398), \u003ctraceback object at 0x7f3f4a29e830\u003e)"
       },
-      "dateCreated": "Apr 18, 2016 9:25:28 PM",
-      "dateStarted": "Apr 28, 2016 6:58:22 PM",
-      "dateFinished": "Apr 28, 2016 6:58:45 PM",
+      "dateCreated": "Apr 29, 2016 3:25:49 AM",
+      "dateStarted": "Apr 29, 2016 3:28:19 AM",
+      "dateFinished": "Apr 29, 2016 4:24:39 AM",
       "status": "ERROR",
       "progressUpdateIntervalMs": 500
     },
@@ -112,34 +211,22 @@
         "params": {},
         "forms": {}
       },
-      "jobName": "paragraph_1461894212662_970730995",
-      "id": "20160428-184332_1421621411",
-      "dateCreated": "Apr 28, 2016 6:43:32 PM",
+      "jobName": "paragraph_1461900448568_-1501914062",
+      "id": "20160429-032728_950676117",
+      "dateCreated": "Apr 29, 2016 3:27:28 AM",
       "status": "READY",
       "progressUpdateIntervalMs": 500
     }
   ],
-  "name": "MIDS-W261-HW13-Cordell",
-  "id": "2BJEZBD35",
+  "name": "HW13",
+  "id": "2BGPSW5RG",
   "angularObjects": {
-    "2BGUENPZ3": [],
-    "2BHWP8SB9": [],
-    "2BJ4WNTMK": [],
-    "2BEYU77A3": [],
-    "2BGD2YP6V": [],
-    "2BEZHMFE8": [],
-    "2BFPZWD7A": [],
-    "2BHBMNNHJ": [],
-    "2BFE5ZB9F": [],
-    "2BGYWJRFF": [],
-    "2BESSK699": [],
-    "2BGKFSKEQ": [],
-    "2BG3HGBMV": [],
-    "2BHEQK6M5": [],
-    "2BHVGJCK8": [],
-    "2BF8DDP2Y": [],
-    "2BGUDF8DW": [],
-    "2BEW9U39K": []
+    "2B44YVSN1": [],
+    "2AJXGMUUJ": [],
+    "2AK8P7CPX": [],
+    "2AM1YV5CU": [],
+    "2AKK3QQXU": [],
+    "2ANGGHHMQ": []
   },
   "config": {},
   "info": {}
