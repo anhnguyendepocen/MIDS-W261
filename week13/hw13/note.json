@@ -39,7 +39,7 @@
     {
       "text": "%pyspark\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    node_list.append((node, neighbors.keys()))\n    for neighbor in neighbors:\n        node_list.append((neighbor, []))\n    return node_list\n\ndef adjustRank(rank, mass):\n    adj_rank \u003d 0.0\n    if rank is not None:\n        adj_rank \u003d rank\n    return d*adj_rank + d*mass/n + t\n\n\n\n# damping parameter\nd \u003d 0.85\n\nD \u003d sc.textFile(\"/user/rcordell/hw13/in/PageRank-test.txt\")\n\ngraph \u003d D.flatMap(lambda line: line_splitter(line)).reduceByKey(lambda a,b:a+b).cache()\n\n# compute the number of nodes\nn \u003d graph.count()\n\n# compute teleportation factor\nt \u003d (1.0-d)/n\n\n# prime the pump with the initial page rank for each node \u003d 1/n\nadj_list \u003d graph.map(lambda (node, outlinks): (node, (1.0/n, outlinks)))\n\nfor i in range(0,30):\n    dangling_mass \u003d adj_list.filter(lambda x: len(x[1][1])\u003d\u003d0).map(lambda x: x[1][0]).reduce(lambda x,y:x+y)\n\n    distributed_mass \u003d adj_list.filter(lambda (node, (rank,outlinks)): len(outlinks) \u003e 0)\\\n        .map(lambda (node, (rank, outlinks)): (rank/len(outlinks), outlinks))\\\n        .flatMapValues(lambda x:x)\\\n        .map(lambda (rank, outlink): (outlink, rank))\\\n        .reduceByKey(lambda x,y: x+y)\n\n    adj_list\u003dgraph.leftOuterJoin(distributed_mass)\\\n        .map(lambda (node, (outlinks, rank)):(node, (rank,outlinks)))\\\n        .map(lambda (node, (rank, outlinks)):(node, (adjustRank(rank, dangling_mass), outlinks)) )\n        \n\nfor node in  adj_list.sortBy(lambda x: -x[1][0]).take(5):\n    print node[0], node[1][0]\n",
       "authenticationInfo": {},
-      "dateUpdated": "Apr 22, 2016 7:51:35 PM",
+      "dateUpdated": "Apr 28, 2016 6:40:50 PM",
       "config": {
         "colWidth": 12.0,
         "graph": {
@@ -66,14 +66,15 @@
         "msg": "B 0.383410412554\nC 0.343378600107\nE 0.0808856932689\nD 0.0390870921233\nF 0.0390870921233\n"
       },
       "dateCreated": "Apr 18, 2016 9:03:58 PM",
-      "dateStarted": "Apr 22, 2016 7:51:35 PM",
-      "dateFinished": "Apr 22, 2016 7:51:37 PM",
+      "dateStarted": "Apr 28, 2016 6:40:50 PM",
+      "dateFinished": "Apr 28, 2016 6:41:08 PM",
       "status": "FINISHED",
       "progressUpdateIntervalMs": 500
     },
     {
-      "text": "                page_rank +\u003d intermediate_value\n        page_rank \u003d self.options.s*page_rank + \\\n                    self.options.s*ip/self.options.n + \\\n                    (1.0-self.options.s)/self.options.n",
-      "dateUpdated": "Apr 18, 2016 11:44:26 PM",
+      "text": "%pyspark\n\nimport re\n\ndef line_splitter(line):\n    node, adj_list \u003d re.split(\u0027\\t\u0027,line.strip())\n    node \u003d node.strip(\u0027\"\u0027)\n    neighbors \u003d eval(adj_list)\n    node_list \u003d []\n    node_list.append((node, neighbors.keys()))\n    for neighbor in neighbors:\n        node_list.append((neighbor, []))\n    return node_list\n\ndef index_line_splitter(line):\n    article, index, in_degree, out_degree \u003d re.split(\u0027\\t\u0027, line.strip())\n    return (index, article)\n\ndef adjustRank(rank, mass):\n    adj_rank \u003d 0.0\n    if rank is not None:\n        adj_rank \u003d rank\n    return d*adj_rank + d*mass/n + t\n\n\ndef page_rank(graph_path, index_path\u003dNone, d\u003d0.85):\n    D \u003d sc.textFile(graph_path, use_unicode\u003dFalse)\n    I \u003d sc.textFile(index_path, use_unicode\u003dFalse)\n    \n    graph \u003d D.flatMap(lambda line: line_splitter(line)).reduceByKey(lambda a,b:a+b).cache()\n    \n    # compute the number of nodes\n    n \u003d graph.count()\n    \n    # compute teleportation factor\n    t \u003d (1.0-d)/n\n    \n    # prime the pump with the initial page rank for each node \u003d 1/n\n    adj_list \u003d graph.map(lambda (node, outlinks): (node, (1.0/n, outlinks)))\n    \n    for i in range(0,30):\n        dangling_mass \u003d adj_list.filter(lambda x: len(x[1][1])\u003d\u003d0).map(lambda x: x[1][0]).reduce(lambda x,y:x+y)\n    \n        distributed_mass \u003d adj_list.filter(lambda (node, (rank,outlinks)): len(outlinks) \u003e 0)\\\n            .map(lambda (node, (rank, outlinks)): (rank/len(outlinks), outlinks))\\\n            .flatMapValues(lambda x:x)\\\n            .map(lambda (rank, outlink): (outlink, rank))\\\n            .reduceByKey(lambda x,y: x+y)\n    \n        adj_list\u003dgraph.leftOuterJoin(distributed_mass)\\\n            .map(lambda (node, (outlinks, rank)):(node, (rank,outlinks)))\\\n            .map(lambda (node, (rank, outlinks)):(node, (adjustRank(rank, dangling_mass), outlinks)) )\n    \n    if index_path:\n        article_list \u003d I.map(lambda line: index_line_splitter(line))\n        articles \u003d article_list.join(adj_list)\n        articles.collect()\n#        for node in articles.collect():\n#            print node\n#        for node in articles.sortBy(lambda x: -x[2][0]).collect():\n#            print node[1], node[2][0]\n    else:\n        # take the Top N based on PageRank\n        for node in  adj_list.sortBy(lambda x: -x[1][0]).take(20):\n            print node[0], node[1][0]\n\npage_rank(\"/user/rcordell/hw13/in/PageRank-test.txt\",\"/user/rcordell/hw13/in/indices-test.txt\")",
+      "authenticationInfo": {},
+      "dateUpdated": "Apr 28, 2016 6:58:22 PM",
       "config": {
         "colWidth": 12.0,
         "graph": {
@@ -85,7 +86,8 @@
           "groups": [],
           "scatter": {}
         },
-        "enabled": true
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
       },
       "settings": {
         "params": {},
@@ -93,7 +95,26 @@
       },
       "jobName": "paragraph_1461039928242_-1077283861",
       "id": "20160418-212528_431235186",
+      "result": {
+        "code": "ERROR",
+        "type": "TEXT",
+        "msg": "Py4JJavaError: An error occurred while calling z:org.apache.spark.api.python.PythonRDD.collectAndServe.\n: org.apache.spark.SparkException: Job 544 cancelled part of cancelled job group zeppelin-20160418-212528_431235186\n\tat org.apache.spark.scheduler.DAGScheduler.org$apache$spark$scheduler$DAGScheduler$$failJobAndIndependentStages(DAGScheduler.scala:1431)\n\tat org.apache.spark.scheduler.DAGScheduler.handleJobCancellation(DAGScheduler.scala:1370)\n\tat org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply$mcVI$sp(DAGScheduler.scala:783)\n\tat org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply(DAGScheduler.scala:783)\n\tat org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply(DAGScheduler.scala:783)\n\tat scala.collection.mutable.HashSet.foreach(HashSet.scala:79)\n\tat org.apache.spark.scheduler.DAGScheduler.handleJobGroupCancelled(DAGScheduler.scala:783)\n\tat org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:1619)\n\tat org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1599)\n\tat org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1588)\n\tat org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:48)\n\tat org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:620)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1832)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1845)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1858)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:1929)\n\tat org.apache.spark.rdd.RDD$$anonfun$collect$1.apply(RDD.scala:927)\n\tat org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:150)\n\tat org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:111)\n\tat org.apache.spark.rdd.RDD.withScope(RDD.scala:316)\n\tat org.apache.spark.rdd.RDD.collect(RDD.scala:926)\n\tat org.apache.spark.api.python.PythonRDD$.collectAndServe(PythonRDD.scala:405)\n\tat org.apache.spark.api.python.PythonRDD.collectAndServe(PythonRDD.scala)\n\tat sun.reflect.GeneratedMethodAccessor90.invoke(Unknown Source)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:231)\n\tat py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:381)\n\tat py4j.Gateway.invoke(Gateway.java:259)\n\tat py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:133)\n\tat py4j.commands.CallCommand.execute(CallCommand.java:79)\n\tat py4j.GatewayConnection.run(GatewayConnection.java:209)\n\tat java.lang.Thread.run(Thread.java:745)\n\n(\u003cclass \u0027py4j.protocol.Py4JJavaError\u0027\u003e, Py4JJavaError(u\u0027An error occurred while calling z:org.apache.spark.api.python.PythonRDD.collectAndServe.\\n\u0027, JavaObject id\u003do19825), \u003ctraceback object at 0x108556290\u003e)"
+      },
       "dateCreated": "Apr 18, 2016 9:25:28 PM",
+      "dateStarted": "Apr 28, 2016 6:58:22 PM",
+      "dateFinished": "Apr 28, 2016 6:58:45 PM",
+      "status": "ERROR",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1461894212662_970730995",
+      "id": "20160428-184332_1421621411",
+      "dateCreated": "Apr 28, 2016 6:43:32 PM",
       "status": "READY",
       "progressUpdateIntervalMs": 500
     }
